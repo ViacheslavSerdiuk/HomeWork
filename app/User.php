@@ -89,17 +89,18 @@ class User extends Authenticatable
         return $this->belongsToMany('App\User', 'followers', 'user_id', 'follower_id')->withTimestamps();
     }
 
-    function follow(User $user) {
+    function follow(User $user)
+    {
         $user->followers()->attach($this->id);
     }
 
-    function unfollow(User $user) {
+    function unfollow(User $user)
+    {
         $user->followers()->detach($this->id);
     }
 
     public function isFollowed()
     {
-
         return $this->followers()->where('follower_id', auth()->id())->count() > 0;
     }
 
@@ -107,7 +108,5 @@ class User extends Authenticatable
     {
         return $this->isFollowed();
     }
-
-
 
 }

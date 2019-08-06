@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StorePostRequest;
 use App\Post;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -23,7 +24,6 @@ class PostsController extends Controller
     public function index()
     {
             $posts = Post::with('user')->latest()->paginate(10);
-
             return view('posts.index',compact('posts'));
     }
 
@@ -44,14 +44,9 @@ class PostsController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(StorePostRequest $request)
     {
 
-        $this->validate($request,[
-            'title' => 'required',
-            'body' => 'required',
-            'image' =>'nullable|image'
-        ]);
         $post = Post::add($request->all());
 
         $post->uploadImage($request->file('image'));
@@ -69,7 +64,6 @@ class PostsController extends Controller
      */
     public function show(Post $post)
     {
-
         return  view('posts.show',compact('post'));
     }
 
@@ -81,9 +75,8 @@ class PostsController extends Controller
      */
     public function edit(Post $post)
     {
-        $this->authorize("update",$post);
-
-        return view("posts.edit",['post'=>$post]);
+        $this->authorize('update',$post);
+        return view('posts.edit',['post'=>$post]);
     }
 
     /**
@@ -93,19 +86,10 @@ class PostsController extends Controller
      * @param  \App\Post  $post
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Post $post)
+    public function update(StorePostRequest $request, Post $post)
     {
-        $this->validate($request,[
-            'title' => 'required',
-            'body' => 'required',
-            'image' =>'nullable|image'
-
-        ]);
-        ;
-        $post = Post::find($post->id);
         $post->edit($request->all());
         $post->uploadImage($request->file('image'));
-
         return redirect()->route('posts.index')->with('success','Your message has been updated');
     }
 
@@ -117,7 +101,7 @@ class PostsController extends Controller
      */
     public function destroy(Post $post)
     {
-        Post::find($post->id)->remove();
+        $post->remove();
         return redirect()->route('posts.index');
     }
 }
