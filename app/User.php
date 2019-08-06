@@ -10,7 +10,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 class User extends Authenticatable
 {
     use Notifiable;
-    protected $dates = ['birthday'];
+
 
     protected $appends = ['url','count_posts','is_followed'];
 
@@ -43,14 +43,19 @@ class User extends Authenticatable
 
 
 
-    public function posts(){
+    public function posts()
+    {
         return $this->hasMany(Post::class);
     }
 
-    public function getUrlAttribute(){
+    public function getBirthdayAttribute($date)
+    {
+       return Carbon::parse($date)->format('m/d/Y');
+    }
 
-        return '/profile/'.$this->id;
-
+    public function getUrlAttribute()
+    {
+        return route('profile.show',$this->id);
     }
 
     public function getCountPostsAttribute()

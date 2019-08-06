@@ -16,7 +16,7 @@
 
                         </div>
                         <div class="ml-5">
-                            <h4>Birthday : {{ $user->birthday->format('m/d/Y')}}</h4>
+                            <h4>Birthday : {{ $user->birthday}}</h4>
 
                         </div>
 
